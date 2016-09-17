@@ -1,7 +1,9 @@
 # push-notifier
+-----------------
 Notifier is a simple script that could be added to a Linux system and give it the ability to push notifications to Android phones using SimplePush.io
 
 ### Usage : 
+-----------
 #### Basic
 ``` 
 notifier -t 'Test Notifier' -m 'Notification Text Body'
@@ -17,10 +19,12 @@ $ command_or_script && notifier -t title_title -m "success message" || notifier 
 ```
 
 ## Installation
-## Android
-#### MUST : Install SimplePush Application (https://simplepush.io/)
-##### Copy the and add it to /etc/notifier.conf or pass it to the automatic installer.
+#### Android
+---------
+##### Install SimplePush Application (https://simplepush.io/)
 
+### Linux
+-----
 #### Manual 
 ```
 $ git clone git@github.com:OsamaJBR/push-notifier.git push-notifier
