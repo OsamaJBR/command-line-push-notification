@@ -12,8 +12,8 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 PKG_MANAGER=$( command -v yum || command -v apt-get ) || { echo "Neither yum nor apt-get found"; exit 2;}
-command -v wget &>> /dev/null || $PKG_MANAGER install wget
-command -v unzip &>> /dev/null || $PKG_MANAGER install unzip
+command -v wget &>> /dev/null || $PKG_MANAGER install -y wget
+command -v unzip &>> /dev/null || $PKG_MANAGER install -y unzip
 
 wget $DOWNLOAD_LINK -O $TEMP/push-notifier.zip
 cd $TEMP && unzip $TEMP/push-notifier.zip
@@ -21,7 +21,9 @@ cp $TEMP/push-notifier-master/notifier.conf $CONFIG_PATH
 cp $TEMP/push-notifier-master/notifier.py $BIN_FILE
 chmod +x $BIN_FILE
 
-echo "######"
+echo "### INSTALLING PYTHON REQUIREMENTS ###"
+$PKG_MANAGER install -y python-requests python-argparse python-configparser
+
 read -p "Have you installed SimplePush app on your android ? If yes, please insert it now or press enter : " AUTH_KEY
 if [ -z $AUTH_KEY];then
     echo "Installation is done, please add the SimplePush key in $CONFIG_PATH"
