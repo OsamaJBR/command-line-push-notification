@@ -9,7 +9,7 @@ config.read('/etc/notifier.conf')
 
 ## FUNCTIONS
 def simplePushNotification(key,title,message):
-    request_url='%s/%s/%s/%s' %(config.get('simplepush','url'),key,title,message)
+    request_url='%s/%s/%s/%s' %(config.get('SimplePush','url'),key,title,message)
     req = requests.get(request_url)
     if req.status_code != requests.codes.ok :
         print "Failed to send push notification, URL= %r, RESPONSE= %r" %(req.url, req.text)
@@ -20,7 +20,7 @@ def simplePushNotification(key,title,message):
 def main(parser):
     args = parser.parse_args()
     send_req = simplePushNotification(
-        key=config.get('simplepush','key'),
+        key=config.get('SimplePush','key'),
         title=args.title,
         message=args.message
         )
