@@ -8,6 +8,11 @@ Notifier is a simple python script that could be added to a Linux system and giv
 ``` 
 notifier -t 'Test Notifier' -m 'Notification Text Body'
 ``` 
+#### Groups
+```
+notifier --group developers -t 'Test Notifier' -m 'Notification for a group user'
+```
+
 ![alt tag](https://i.imgflip.com/1arn0r.gif) 
 #### Conditional
 ```
