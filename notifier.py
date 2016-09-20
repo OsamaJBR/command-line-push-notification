@@ -10,7 +10,6 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 '''
-
 from ConfigParser import SafeConfigParser
 import requests
 import argparse
@@ -20,21 +19,37 @@ config = SafeConfigParser()
 config.read('/etc/notifier.conf')
 
 ## FUNCTIONS
-def simplePushNotification(key,title,message):
-    request_url='%s/%s/%s/%s' %(config.get('SimplePush','url'),key,title,message)
-    req = requests.get(request_url)
-    if req.status_code != requests.codes.ok :
-        print "Failed to send push notification, URL= %r, RESPONSE= %r" %(req.url, req.text)
-        return False
+def getGroupKeys(group_name):
+    try: return config.get('groups',group_name)
+    except Exception as e : 
+        print 'No group called %s, will send it default key.' %group_name
+        return config.get('SimplePush','key')
+    
+def simplePushNotification(keys,title,message):
+    failed_keys=[]
+    for key in keys.split(','):
+        request_url='%s/%s/%s/%s' %(config.get('SimplePush','url'),key,title,message)
+        req = requests.get(request_url)
+        if req.status_code != requests.codes.ok :
+            print "Failed to send push notification, URL= %r, RESPONSE= %r" %(req.url, req.text)
+            failed_keys.append(key)
+    if failed_keys : return False
     return True
-
+    
 ## MAIN
 def main(parser):
     args = parser.parse_args()
+    keys=config.get('SimplePush','key')
+    if args.group and args.user:
+        keys='%s,%s' %(getGroupKeys(args.group),args.user)
+    if args.group:
+        keys=getGroupKeys(args.group)
+    if args.user:
+        keys=args.user
     send_req = simplePushNotification(
-        key=config.get('SimplePush','key'),
-        title=args.title,
-        message=args.message
+            keys=keys,
+            title=args.title,
+            message=args.message
         )
     if not send_req : exit(2)
 
@@ -43,4 +58,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-t',action='store',dest='title')
     parser.add_argument('-m',action='store',dest='message')
+    parser.add_argument('--group',action='store',dest='group')
+    parser.add_argument('--user',action='store',dest='user')
     main(parser)
