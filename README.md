@@ -4,11 +4,18 @@ Notifier is a simple python script that could be added to a Linux system and giv
 
 ### Usage : 
 -----------
-#### Basic
+#### Basic 
+##### Predefind user in notifier.conf
 ``` 
 notifier -t 'Test Notifier' -m 'Notification Text Body'
 ``` 
+##### Given user-key as param 
+``` 
+notifier --user USER_KEY -t 'Test Notifier' -m 'Notification Text Body'
+``` 
+
 #### Groups
+##### Predefind group in notifier.conf
 ```
 notifier --group developers -t 'Test Notifier' -m 'Notification for a group user'
 ```
