@@ -16,7 +16,7 @@ import argparse
 
 # Config Parsing
 config = SafeConfigParser()
-config.read('/etc/notifier.conf')
+config.read('notifier.conf')
 
 ## FUNCTIONS
 def getGroupKeys(group_name):
@@ -46,6 +46,8 @@ def main(parser):
         keys=getGroupKeys(args.group)
     if args.user:
         keys=args.user
+    if args.key:
+        keys=args.key
     send_req = simplePushNotification(
             keys=keys,
             title=args.title,
@@ -58,6 +60,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-t',action='store',dest='title')
     parser.add_argument('-m',action='store',dest='message')
+    parser.add_argument('-k',action='store',dest='key')
     parser.add_argument('--group',action='store',dest='group')
     parser.add_argument('--user',action='store',dest='user')
     main(parser)
