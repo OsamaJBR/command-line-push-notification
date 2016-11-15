@@ -13,18 +13,29 @@ GNU General Public License for more details.
 from ConfigParser import SafeConfigParser
 import requests
 import argparse
+import os
 
 # Config Parsing
 config = SafeConfigParser()
-config.read('notifier.conf')
+if os.path.exists('/etc/notifier.conf'):
+    configPath='/etc/notifier.conf'
+else:
+    configPath='notifier.conf'
+config.read(configPath)
 
 ## FUNCTIONS
 def getGroupKeys(group_name):
     try: return config.get('groups',group_name)
     except Exception as e : 
-        print 'No group called %s, will send it default key.' %group_name
-        return config.get('SimplePush','key')
-    
+        print 'No group called %s.' %group_name
+        exit(1)
+
+def getUserKey(user_name):
+    try: return config.get('users',user_name)
+    except Exception as e : 
+        print 'No user called %s.' %user_name
+        exit(1)
+
 def simplePushNotification(keys,title,message):
     failed_keys=[]
     for key in keys.split(','):
@@ -35,17 +46,17 @@ def simplePushNotification(keys,title,message):
             failed_keys.append(key)
     if failed_keys : return False
     return True
-    
+
 ## MAIN
 def main(parser):
     args = parser.parse_args()
     keys=config.get('SimplePush','key')
-    if args.group and args.user:
-        keys='%s,%s' %(getGroupKeys(args.group),args.user)
+    if args.group and args.user and args.key:
+        keys='%s,%s,%s' %(getGroupKeys(args.group),getUserKey(args.user),args.key)
     if args.group:
         keys=getGroupKeys(args.group)
     if args.user:
-        keys=args.user
+        keys=getUserKey(args.group)
     if args.key:
         keys=args.key
     send_req = simplePushNotification(
@@ -61,6 +72,6 @@ if __name__ == "__main__":
     parser.add_argument('-t',action='store',dest='title')
     parser.add_argument('-m',action='store',dest='message')
     parser.add_argument('-k',action='store',dest='key')
-    parser.add_argument('--group',action='store',dest='group')
-    parser.add_argument('--user',action='store',dest='user')
+    parser.add_argument('-g',action='store',dest='group')
+    parser.add_argument('-u',action='store',dest='user')
     main(parser)
